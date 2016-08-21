@@ -1,5 +1,5 @@
 ﻿var channel = "presence-demo/" + Math.random().toString(16).substr(2, 8) ; 
-var client0 = emitter.connect({ secure: true, clientId: "Myself" });
+var client0 = emitter.connect({ secure: true });
 var client1 = null;
 var client2 = null; 
 
@@ -14,22 +14,14 @@ var vue = new Vue({
     },
     methods: {
         toggleDevice1: function () {
-            client1 = toggleConnection(client1, "Margaret H.");
+            client1 = toggleConnection(client1, "Margaret");
             vue.$data.device1 = (client1) ? "logout" : "login";
         },
 
         toggleDevice2: function() {
-            client2 = toggleConnection(client2, "Alan K.");
+            client2 = toggleConnection(client2, "Alan");
             vue.$data.device2 = (client2) ? "logout" : "login";
         },
-
-        getPresence: function() {
-            // Query the presence state
-            client0.presence({
-                key: key,
-                channel: channel
-            })
-        }
     }
 });
 
@@ -58,39 +50,42 @@ function toggleConnection(client, name) {
 client0.on('connect', function(){
     // once we're connected, subscribe to the 'chat' channel
     console.log('emitter: connected');
-    client0.subscribe({
+
+    // Query the presence state
+    client0.presence({
         key: key,
-        channel: channel,
-        presence: true
-    });
+        channel: channel
+    })
 })
 
 // on every presence event, print it out
 client0.on('presence', function(msg){
     console.log(msg);    
     var users = vue.$data.users;
-    if (msg.action){
-        // We've received a presence state change notification, when
-        // someone joins or leaves the channel.
-        if(msg.action == 'join'){
-            users.push({ 
-                name: msg.client
-            })
-        } else if(msg.action == 'leave') {
-            vue.$data.users = users.filter(function( obj ) {
-                return obj.name !== msg.client;
-            });
-        }
-    } 
-    
-    if(msg.clients){
-        // We've received a full response with a complete list of clients
+    switch(msg.event){
+        // Occurs when we've received a full response with a complete list of clients
         // that are currently subscribed to this channel. 
-        for(var i=0; i<msg.clients.length;++i){
-            users.push({
-                name: msg.clients[i]
+        case 'status':
+            for(var i=0; i<msg.who.length;++i){
+                users.push({
+                    name: msg.who[i]
+                });
+            }
+        break;
+
+        // Occurs when a user subscribes to a channel.
+        case 'subscribe':
+            users.push({ 
+                name: msg.who
             });
-        }
+        break;
+
+        // Occurs when a user unsubscribes or disconnects from a channel.
+        case 'unsubscribe':
+            vue.$data.users = users.filter(function( obj ) {
+                return obj.name !== msg.who;
+            });
+        break;
     }
 
     // Also, set the occupancy

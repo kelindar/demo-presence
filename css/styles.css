@@ -5,13 +5,6 @@ body{
 	background-color: rgb(244, 244, 244);
 }
 
-.entry {
-	font-family: "Sue Ellen Francisco";
-	min-height: 30px;
-	margin-bottom: 10px;
-	font-size: 25px;
-	color: #000;
-}
 
 .btn {
 	border-radius: 0px;
@@ -80,7 +73,7 @@ body{
 }
 
 .avatar{
-    margin-bottom: 28px;
+    margin-bottom: 9px;
     height: 170px;
 }
 
@@ -94,6 +87,16 @@ body{
 	filter:none;
 }
 
+.screen h3, .screen h4 {
+	margin: 0;
+}
+
 .screen h3 {
-	text-decoration: underline;
+	margin-bottom: 15px;
+}
+
+li {
+	font-size: 2.5rem;
+    text-align: left;
+    color: #d9534f;
 }
