@@ -36,7 +36,7 @@ function toggleConnection(client, name) {
         return null;
     } else {
         // If client is not yet connected, connect and subscribe to the channel
-        client = emitter.connect({ secure: true, clientId: name });
+        client = emitter.connect({ secure: true, username: name });
         client.on('connect', function(){
             client.subscribe({
                 key: key,
@@ -67,23 +67,19 @@ client0.on('presence', function(msg){
         // that are currently subscribed to this channel. 
         case 'status':
             for(var i=0; i<msg.who.length;++i){
-                users.push({
-                    name: msg.who[i]
-                });
+                users.push(msg.who[i]);
             }
         break;
 
         // Occurs when a user subscribes to a channel.
         case 'subscribe':
-            users.push({ 
-                name: msg.who
-            });
+            users.push(msg.who);
         break;
 
         // Occurs when a user unsubscribes or disconnects from a channel.
         case 'unsubscribe':
             vue.$data.users = users.filter(function( obj ) {
-                return obj.name !== msg.who;
+                return obj.id !== msg.who.id;
             });
         break;
     }

@@ -44,8 +44,8 @@
                 <div class="speaker"></div>
                 <div class="screen">
                     <h3>Now Online: {{occupancy}}</h3>
-                    <ul v-for="user in users" track-by="name" >
-                        <li>{{user.name}}</li>
+                    <ul v-for="user in users" track-by="id" >
+                        <li>{{user.username}}</li>
                     </ul>
                 </div>
                 <div class="home"></div>
